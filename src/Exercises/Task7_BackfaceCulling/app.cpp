@@ -7,15 +7,15 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 #include "Application/utils.h"
 
 void SimpleShapeApplication::init() {
 
     glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
 
     auto program = xe::create_program(std::string(PROJECT_DIR) + "/shaders/base_vs.glsl",
@@ -54,7 +54,15 @@ void SimpleShapeApplication::init() {
 
             -0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
             -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f //Green
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //Green
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, //Black - podstawa
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f //Black - podstawa
     };
 
     GLuint v_buffer_handle;
@@ -67,7 +75,7 @@ void SimpleShapeApplication::init() {
 
 
     std::vector<GLushort> indices = {
-            6,7,8,0,9,2,1,10,11, 3,4,5// wypisujemy tyle elementów ile mamy wierzchołków
+            6,7,8,12,13,14,0,9,2,1,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -118,13 +126,14 @@ void SimpleShapeApplication::init() {
     //glm::mat4 ViewMatrix = glm::translate(glm::mat4(), glm::vec3(-3.0f, 0.0f ,0.0f));
     glm::mat4 ModelMatrix = glm::mat4(1.0f);
     glm::mat4 ViewMatrix = glm::lookAt(
-            glm::vec3(1.0f,1.0f,1.0f), // the position of your camera, in world space
-            glm::vec3(0.0f,0.3f,0.05f),   // where you want to look at, in world space
-            glm::vec3(0.0f,1.0f,0.0f)       // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
+
+            glm::vec3(1.0f,1.0f,1.0f),
+            glm::vec3(0.0f,0.3f,0.05f),
+            glm::vec3(0.0f,1.0f,0.0f)
     );
     glm::mat4 ProjectionMatrix = glm::perspective(
-            glm::radians(90.0f), // The vertical Field of View, in radians: the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
-            4.0f / 3.0f,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
+            glm::radians(45.0f), // The vertical Field of View, in radians: the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
+            (float)w/h,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
             0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
             100.0f             // Far clipping plane. Keep as little as possible.
     );
@@ -145,6 +154,6 @@ void SimpleShapeApplication::init() {
 
 void SimpleShapeApplication::frame() {
     glBindVertexArray(vao_);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
     glBindVertexArray(0);
 }
