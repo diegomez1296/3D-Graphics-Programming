@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 #include "Application/utils.h"
 
@@ -39,19 +39,28 @@ void SimpleShapeApplication::init() {
     std::vector<GLfloat> vertices = {
             -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f,
             0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-
-            -0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
-            0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-            -0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
-            -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, //LightBlue
 
             0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
             0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f
+            0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, //Blue
+
+            -0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, //Red
+
+            -0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //Green
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, //Black - podstawa
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f //Black - podstawa
+
     };
 
     GLuint v_buffer_handle;
@@ -121,7 +130,7 @@ void SimpleShapeApplication::init() {
     );
     glm::mat4 ProjectionMatrix = glm::perspective(
             glm::radians(70.0f), // The vertical Field of View, in radians: the amount of "zoom". Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
-            4.0f / 3.0f,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
+            (float)w/h,       // Aspect Ratio. Depends on the size of your window. Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
             0.1f,              // Near clipping plane. Keep as big as possible, or you'll get precision issues.
             100.0f             // Far clipping plane. Keep as little as possible.
     );
@@ -142,6 +151,6 @@ void SimpleShapeApplication::init() {
 
 void SimpleShapeApplication::frame() {
     glBindVertexArray(vao_);
-    glDrawArrays(GL_TRIANGLES, 0, 12);
+    glDrawArrays(GL_TRIANGLES, 0, 18);
     glBindVertexArray(0);
 }
