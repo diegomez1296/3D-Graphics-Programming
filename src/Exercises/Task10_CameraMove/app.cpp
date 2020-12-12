@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 #include "Application/utils.h"
 
@@ -36,9 +36,9 @@ void SimpleShapeApplication::init() {
     set_camera(new Camera);
     set_controler(new CameraControler(camera()));
 
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
+//    glEnable(GL_CULL_FACE);
+//    glFrontFace(GL_CCW);
+//    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
 
     std::vector<GLfloat> vertices = {
@@ -56,7 +56,15 @@ void SimpleShapeApplication::init() {
 
             -0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
             -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f //Green
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //Green
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, //Black - podstawa
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f //Black - podstawa
     };
 
     GLuint v_buffer_handle;
@@ -69,7 +77,7 @@ void SimpleShapeApplication::init() {
 
 
     std::vector<GLushort> indices = {
-            6,7,8,0,9,2,1,10,11, 3,4,5// wypisujemy tyle elementów ile mamy wierzchołków
+            6,7,8,12,13,14,0,9,2,1,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -155,7 +163,7 @@ void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
 
 void SimpleShapeApplication::frame() {
     glBindVertexArray(vao_);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
     glBindVertexArray(0);
 
     auto PVM = camera_->projection() * camera_->view();
