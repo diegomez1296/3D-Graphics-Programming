@@ -35,7 +35,7 @@ Pyramid::Pyramid() {
 
 
     std::vector<GLushort> indices = {
-            0,1,4,1,2,5,2,3,6,3,0,7// wypisujemy tyle elementów ile mamy wierzchołków
+            0,1,4,1,2,5,2,3,6,3,0,7, 0,1,2,0,2,3// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -116,7 +116,7 @@ void Pyramid::draw() {
     glBindTexture(GL_TEXTURE_2D,diffuse_texture_);
 
     glBindVertexArray(vao_);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 

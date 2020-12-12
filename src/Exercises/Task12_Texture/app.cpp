@@ -7,9 +7,9 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <memory>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
+#include "memory"
 
 #include "Application/utils.h"
 
@@ -37,9 +37,9 @@ void SimpleShapeApplication::init() {
     set_camera(new Camera);
     set_controler(new CameraControler(camera()));
 
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
+//    glEnable(GL_CULL_FACE);
+//    glFrontFace(GL_CW);
+//    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
 
     pyramid_ = std::make_shared<Pyramid>();
