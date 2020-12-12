@@ -22,7 +22,15 @@ Pyramid::Pyramid() {
 
             -0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
             -0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f //Green
+            0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //Green
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, //Black - podstawa
+
+            -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f //Black - podstawa
     };
 
     GLuint v_buffer_handle;
@@ -35,7 +43,7 @@ Pyramid::Pyramid() {
 
 
     std::vector<GLushort> indices = {
-            6,7,8,0,9,2,1,10,11, 3,4,5// wypisujemy tyle elementów ile mamy wierzchołków
+            6,7,8,12,13,14,0,9,2,1,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -87,6 +95,6 @@ void Pyramid::draw() {
     //Tu wywolujemy polecenie glDrawElements
 
     glBindVertexArray(vao_);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(0));
     glBindVertexArray(0);
 }

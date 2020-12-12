@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 #include "Application/utils.h"
 
@@ -30,9 +30,9 @@ void SimpleShapeApplication::init() {
     set_camera(new Camera);
     set_controler(new CameraControler(camera()));
 
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
+//    glEnable(GL_CULL_FACE);
+//    glFrontFace(GL_CW);
+//    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
 
     //set_Pyramid(new Pyramid);
@@ -105,7 +105,7 @@ void SimpleShapeApplication::frame() {
     //Obrot piramidy
     auto now = std::chrono::steady_clock::now();
     auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(now - start_).count();
-    auto rotation_angle = 2.0f * elapsed_time/rotation_period * glm::pi<float>();
+    auto rotation_angle = 2.0f * glm::pi<float>() * elapsed_time/rotation_period;
 
     glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotation_angle, glm::vec3(0.0f,0.0f,1.0f));
 
@@ -116,14 +116,14 @@ void SimpleShapeApplication::frame() {
     auto O = glm::translate(glm::mat4(1.0f), glm::vec3{x,y,0.0});
 
     //Ksiezyc
-    auto rotation_angle_moon = 2.0f * elapsed_time/rotation_period_moon * glm::pi<float>();
+    auto rotation_angle_moon = 2.0f * glm::pi<float>() * elapsed_time/rotation_period_moon;
     glm::mat4 R_moon = glm::rotate(glm::mat4(1.0f), rotation_angle_moon, glm::vec3(0.0f,0.0f,1.0f));
 
     auto orbital_rotation_angle_moon = 2.0f*glm::pi<float>()*elapsed_time/orbital_rotation_period_moon;
     auto O_moon = glm::translate(glm::mat4(1.0f), glm::vec3{r_moon,r_moon,0.0});
 
     //Satelita
-    auto rotation_angle_sat = 2.0f * elapsed_time/rotation_period_sat * glm::pi<float>();
+    auto rotation_angle_sat = 2.0f * glm::pi<float>() * elapsed_time/rotation_period_sat;
     glm::mat4 R_sat = glm::rotate(glm::mat4(1.0f), rotation_angle_sat, glm::vec3(0.0f,1.0f,0.0f));
 
     auto orbital_rotation_angle_sat = 2.0f*glm::pi<float>()*elapsed_time/orbital_rotation_period_sat;
