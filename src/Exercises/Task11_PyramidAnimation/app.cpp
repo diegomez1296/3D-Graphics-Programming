@@ -37,8 +37,8 @@ void SimpleShapeApplication::init() {
 
     //set_Pyramid(new Pyramid);
     pyramid_ = std::make_shared<Pyramid>();
-    moon_ = std::make_shared<Pyramid>();
-    satelite_ = std::make_shared<Pyramid>();
+    //moon_ = std::make_shared<Pyramid>();
+    //satelite_ = std::make_shared<Pyramid>();
     //Pyramid p = *pyramid_;
 
     //*********************
@@ -98,59 +98,65 @@ void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
     camera_->perspective((glm::pi<float>()/4.0), (float)w/h, 0.1f, 100.0f);
 }
 
+glm::mat4 rotation(float elapsed_time, float rotation_period, const glm::vec3 &axis)
+{
+    auto rotation_angle = 2.0f * glm::pi<float>() * elapsed_time / rotation_period;
+    return glm::rotate(glm::mat4(1.0f), rotation_angle, axis);
+}
+
+glm::mat4 orbital_motion(float elapsed_time, float a, float b, float orbital_rotation_period)
+{
+    auto orbital_rotation_angle = 2.0f * glm::pi<float>() * elapsed_time / orbital_rotation_period;
+    auto x = a * std::cos(orbital_rotation_angle);
+    auto y = b * std::sin(orbital_rotation_angle);
+    auto T = glm::translate(glm::mat4(1.0f), glm::vec3{x,y,0});
+    return T;
+}
+
 void SimpleShapeApplication::frame() {
 
-    pyramid_->draw();
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(now - start_);
+    auto seconds = elapsed_time.count();
 
     //Obrot piramidy
-    auto now = std::chrono::steady_clock::now();
-    auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<float>>(now - start_).count();
-    auto rotation_angle = 2.0f * glm::pi<float>() * elapsed_time/rotation_period;
+    auto R_earth = rotation(seconds, rotation_period, glm::vec3(0.0f,0.0f,1.0f));
+    auto O_earth = orbital_motion(seconds, a, b, orbital_rotation_period);
 
-    glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotation_angle, glm::vec3(0.0f,0.0f,1.0f));
+    auto PVM = camera_->projection() * camera_->view() * O_earth * R_earth;
 
-    //Ruch orbitalny
-    auto orbital_rotation_angle = 2.0f*glm::pi<float>()*elapsed_time/orbital_rotation_period;
-    x = a*cos(orbital_rotation_angle);
-    y = b*sin(orbital_rotation_angle);
-    auto O = glm::translate(glm::mat4(1.0f), glm::vec3{x,y,0.0});
-
-    //Ksiezyc
-    auto rotation_angle_moon = 2.0f * glm::pi<float>() * elapsed_time/rotation_period_moon;
-    glm::mat4 R_moon = glm::rotate(glm::mat4(1.0f), rotation_angle_moon, glm::vec3(0.0f,0.0f,1.0f));
-
-    auto orbital_rotation_angle_moon = 2.0f*glm::pi<float>()*elapsed_time/orbital_rotation_period_moon;
-    auto O_moon = glm::translate(glm::mat4(1.0f), glm::vec3{r_moon,r_moon,0.0});
-
-    //Satelita
-    auto rotation_angle_sat = 2.0f * glm::pi<float>() * elapsed_time/rotation_period_sat;
-    glm::mat4 R_sat = glm::rotate(glm::mat4(1.0f), rotation_angle_sat, glm::vec3(0.0f,1.0f,0.0f));
-
-    auto orbital_rotation_angle_sat = 2.0f*glm::pi<float>()*elapsed_time/orbital_rotation_period_sat;
-    auto O_sat = glm::translate(glm::mat4(1.0f), glm::vec3{r_sat,0.0, r_sat});
-
-    auto PVM = camera_->projection() * camera_->view() * R * O;
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-    //glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
-    moon_->draw();
-    auto S = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-    auto PVM_moon = camera_->projection() * camera_->view() * R * O * O_moon * S;
+    pyramid_->draw();
+
+    //Ksiezyc
+    auto S_moon = glm::scale(glm::mat4(1.0f), {0.5f, 0.5f, 0.5f});
+    auto R_moon = rotation(seconds, rotation_period_moon, glm::vec3(0.0f,0.0f,1.0f));
+    auto O_moon = orbital_motion(seconds, r_moon, r_moon, orbital_rotation_period_moon);
+
+    PVM = camera_->projection() * camera_->view() * O_earth * O_moon * R_moon * S_moon;
+
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-    //glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM_moon[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
-    satelite_->draw();
-    glm::mat4 S_sat = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.25f, 0.25f));
-    auto PVM_sat = camera_->projection() * camera_->view() * R * O * O_sat * S_sat;
+    pyramid_->draw();
+
+    //Satelita
+    auto S_sat = glm::scale(glm::mat4(1.0f), {0.2f, 0.2f, 0.2f});
+    auto R_sat = rotation(seconds, rotation_period_sat, glm::vec3(0.0f,0.0f,1.0f));
+    auto O_sat = orbital_motion(seconds, r_sat, r_sat, orbital_rotation_period_sat);
+
+    auto tilt_sat = glm::rotate(glm::mat4(1.0f), glm::pi<float>() / 2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    PVM = camera_->projection() * camera_->view() * O_earth * tilt_sat * O_sat * R_sat * S_sat;
+
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-    //glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM_sat[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
+    pyramid_->draw();
 }
 
 void SimpleShapeApplication::mouse_button_callback(int button, int action, int mods) {
@@ -175,4 +181,6 @@ void SimpleShapeApplication::cursor_position_callback(double x, double y) {
         controler_->mouse_moved(x, y);
     }
 }
+
+
 
