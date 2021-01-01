@@ -45,6 +45,7 @@ public:
 
     glm::mat4 projection() const { return glm::perspective(fov_, aspect_, near_, far_); }
 
+    float get_fov() { return fov_;}
 private:
     float fov_;
     float aspect_;

@@ -43,7 +43,7 @@ Pyramid::Pyramid() {
 
 
     std::vector<GLushort> indices = {
-            6,7,8,12,13,14,0,9,2,1,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
+            6,7,8,12,13,14,0,2,1,9,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -83,11 +83,11 @@ Pyramid::~Pyramid() {
     //Tu usuwamy VAO i bufory
 
     if(vao_) {
-        delete[] (char*)vao_;
+        glDeleteVertexArrays(1,&vao_);
     }
 
     if(buffer_)
-        delete[] (char*)buffer_;
+        glDeleteBuffers(2, buffer_);
 
 }
 

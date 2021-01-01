@@ -77,7 +77,7 @@ void SimpleShapeApplication::init() {
 
 
     std::vector<GLushort> indices = {
-            6,7,8,12,13,14,0,9,2,1,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
+            6,7,8,12,13,14,0,2,1,9,10,11, 3,4,5, 15,16,17// wypisujemy tyle elementów ile mamy wierzchołków
     };
 
     GLuint idx_buffer_handle;
@@ -158,7 +158,7 @@ void SimpleShapeApplication::init() {
 void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
     Application::framebuffer_resize_callback(w, h);
     glViewport(0,0,w,h);
-    camera_->perspective((glm::pi<float>()/4.0), (float)w/h, 0.1f, 100.0f);
+    camera_->perspective((camera_->get_fov()), (float)w/h, 0.1f, 100.0f);
 }
 
 void SimpleShapeApplication::frame() {

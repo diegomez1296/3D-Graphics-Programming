@@ -101,11 +101,11 @@ Pyramid::~Pyramid() {
     //Tu usuwamy VAO i bufory
 
     if(vao_) {
-        delete[] (char*)vao_;
+        glDeleteVertexArrays(1,&vao_);
     }
 
     if(buffer_)
-        delete[] (char*)buffer_;
+        glDeleteBuffers(2, buffer_);
 
 }
 
