@@ -46,20 +46,14 @@ void SimpleShapeApplication::init() {
 
     //*********************
 
-    float strength = 0.9f;
-    float light[3] = {0.7, 0.7, 0.7};
-
     //Uniform buffer
 
     glGenBuffers(2,ubo_handle);
 
     glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[0]);
-    glBufferData(GL_UNIFORM_BUFFER, 8 * sizeof(float), nullptr, GL_STATIC_DRAW);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float),&strength);
-    glBufferSubData(GL_UNIFORM_BUFFER, 4 * sizeof(float), 3 * sizeof(float),light);
+    glBufferData(GL_UNIFORM_BUFFER, 12 * sizeof(float), nullptr, GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo_handle[0]);
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[1]);
 
 
     glClearColor(0.81f, 0.81f, 0.8f, 1.0f);
@@ -87,18 +81,21 @@ void SimpleShapeApplication::init() {
 void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
     Application::framebuffer_resize_callback(w, h);
     glViewport(0,0,w,h);
-    camera_->perspective((glm::pi<float>()/4.0), (float)w/h, 0.1f, 100.0f);
+    camera_->perspective((camera_->get_fov()), (float)w/h, 0.1f, 100.0f);
 }
 
 void SimpleShapeApplication::frame() {
 
     pyramid_->draw();
 
-    auto PVM = camera_->projection() * camera_->view();
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
-    //glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
+    auto P = camera()->projection();
+    auto VM = camera()->view();
+
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &P[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &VM[0]);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void SimpleShapeApplication::mouse_button_callback(int button, int action, int mods) {

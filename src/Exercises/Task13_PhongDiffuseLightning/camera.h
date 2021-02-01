@@ -87,6 +87,8 @@ public:
 
     glm::mat4 projection() const { return glm::perspective(fov_, aspect_, near_, far_); }
 
+    float get_fov() { return fov_;}
+
     glm::vec3 x() const { return x_; }
     glm::vec3 y() const { return y_; }
     glm::vec3 z() const { return z_; }
