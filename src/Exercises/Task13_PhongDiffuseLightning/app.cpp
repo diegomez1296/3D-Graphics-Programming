@@ -44,9 +44,10 @@ void SimpleShapeApplication::init() {
 
     pyramid_ = std::make_shared<Pyramid>();
 
-    light_.position = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+    light_.position = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
     light_.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    light_.a = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    light_.a = glm::vec4(1.0f, 0.0f, 1.0f, 0.0f);
+    light_.ambient = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 
     //*********************
 
@@ -60,11 +61,11 @@ void SimpleShapeApplication::init() {
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo_handle[0]);
 
     glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[1]);
-    glBufferData(GL_UNIFORM_BUFFER, 12 * sizeof(float), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, 16 * sizeof(float), nullptr, GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
-    glClearColor(0.81f, 0.81f, 0.8f, 1.0f);
+    //glClearColor(0.81f, 0.81f, 0.8f, 1.0f);
     int w, h;
     std::tie(w, h) = frame_buffer_size();
 
@@ -116,6 +117,7 @@ void SimpleShapeApplication::frame() {
     glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * sizeof(float), &lightP_VM[0]);
     glBufferSubData(GL_UNIFORM_BUFFER, 4 * sizeof(float), 4 *sizeof(float), &light_.color);
     glBufferSubData(GL_UNIFORM_BUFFER, 8 * sizeof(float), 4 *sizeof(float), &light_.a);
+    glBufferSubData(GL_UNIFORM_BUFFER, 12 * sizeof(float), 4 *sizeof(float), &light_.ambient);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
