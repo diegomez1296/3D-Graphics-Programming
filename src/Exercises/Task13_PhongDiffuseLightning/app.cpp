@@ -22,17 +22,17 @@ void SimpleShapeApplication::init() {
         std::cerr << std::string(PROJECT_DIR) + "/shaders/base_fs.glsl" << " shader files" << std::endl;
     }
 
-//    auto u_modifiers_index = glGetUniformBlockIndex(program, "Modifiers");
-//    if (u_modifiers_index == GL_INVALID_INDEX)
-//    {
-//        std::cout << "Cannot find Modifiers uniform block in program" << std::endl;
-//    } else { glUniformBlockBinding(program, u_modifiers_index, 0); }
-
     auto u_matrixes_index = glGetUniformBlockIndex(program, "Matrixes");
     if (u_matrixes_index == GL_INVALID_INDEX)
     {
         std::cout << "Cannot find Matrixes uniform block in program" << std::endl;
     } else { glUniformBlockBinding(program, u_matrixes_index, 0); }
+
+    auto u_light_index = glGetUniformBlockIndex(program, "Light");
+    if (u_light_index == GL_INVALID_INDEX)
+    {
+        std::cout << "Cannot find Modifiers uniform block in program" << std::endl;
+    } else { glUniformBlockBinding(program, u_light_index, 1); }
 
     set_camera(new Camera);
     set_controler(new CameraControler(camera()));
@@ -44,6 +44,10 @@ void SimpleShapeApplication::init() {
 
     pyramid_ = std::make_shared<Pyramid>();
 
+    light_.position = glm::vec4(0.0f, 0.0f, 0.5f, 1.0f);
+    light_.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    light_.a = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
     //*********************
 
     //Uniform buffer
@@ -51,17 +55,21 @@ void SimpleShapeApplication::init() {
     glGenBuffers(2,ubo_handle);
 
     glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[0]);
-    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(glm::mat<4,3,glm::f32>), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(glm::mat<3,4,glm::f32>), nullptr, GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo_handle[0]);
 
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[1]);
+    glBufferData(GL_UNIFORM_BUFFER, 12 * sizeof(float), nullptr, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
     glClearColor(0.81f, 0.81f, 0.8f, 1.0f);
     int w, h;
     std::tie(w, h) = frame_buffer_size();
 
     camera_->perspective((glm::pi<float>()/4.0), (float)w/h, 0.1f, 100.0f);
-    camera_->look_at(glm::vec3(2.0f,2.0f,2.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f));
+    camera_->look_at(glm::vec3(0.1f,0.1f,2.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f));
     glViewport(0, 0, w, h);
     //*********************
 
@@ -90,11 +98,24 @@ void SimpleShapeApplication::frame() {
 
     auto P = camera()->projection();
     auto VM = camera()->view();
+    auto R = glm::mat3(VM);
+    auto N = glm::transpose(glm::inverse(R));
+    auto lightP_VM = camera_->view() * light_.position;
 
     glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[0]);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &P[0]);
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &VM[0]);
 
+    glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), 4 + sizeof(float), &N[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + 4 * sizeof(float), 4 * sizeof(float), &N[1]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + 8 * sizeof(float), 4 * sizeof(float), &N[2]);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[1]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * sizeof(float), &lightP_VM[0]);
+    glBufferSubData(GL_UNIFORM_BUFFER, 4 * sizeof(float), 4 *sizeof(float), &light_.color);
+    glBufferSubData(GL_UNIFORM_BUFFER, 8 * sizeof(float), 4 *sizeof(float), &light_.a);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
