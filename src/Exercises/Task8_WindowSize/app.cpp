@@ -147,6 +147,8 @@ void SimpleShapeApplication::init() {
 
 
     glUseProgram(program);
+
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
 }
 
 void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
@@ -162,7 +164,7 @@ void SimpleShapeApplication::frame() {
     glBindVertexArray(0);
 
     auto PVM = P_ * V_;
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
     //glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);

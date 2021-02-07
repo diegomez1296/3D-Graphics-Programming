@@ -89,7 +89,7 @@ void SimpleShapeApplication::init() {
     r_moon = 3.0f;
     r_sat = 1.5f;
 
-
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
 }
 
 void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
@@ -125,7 +125,7 @@ void SimpleShapeApplication::frame() {
 
     auto PVM = camera_->projection() * camera_->view() * O_earth * R_earth;
 
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &PVM[0]);
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, ubo_handle[1]);
 
