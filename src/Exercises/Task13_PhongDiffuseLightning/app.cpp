@@ -42,7 +42,7 @@ void SimpleShapeApplication::init() {
 //    glCullFace(GL_BACK);
     glEnable(GL_DEPTH_TEST);
 
-    pyramid_ = std::make_shared<Pyramid>();
+    quad_ = std::make_shared<Quad>();
 
     light_.position = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
     light_.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -95,7 +95,7 @@ void SimpleShapeApplication::framebuffer_resize_callback(int w, int h) {
 
 void SimpleShapeApplication::frame() {
 
-    pyramid_->draw();
+    quad_->draw();
 
     auto P = camera()->projection();
     auto VM = camera()->view();
@@ -146,6 +146,6 @@ void SimpleShapeApplication::cursor_position_callback(double x, double y) {
 
 void SimpleShapeApplication::cleanup() {
 
-    delete &pyramid_;
+    delete &quad_;
 }
 

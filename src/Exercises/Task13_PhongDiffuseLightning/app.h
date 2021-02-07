@@ -16,7 +16,7 @@
 #include "glad/glad.h"
 #include "camera.h"
 #include "camera_controler.h"
-#include "pyramid.h"
+#include "quad.h"
 
 class SimpleShapeApplication : public xe::Application {
 public:
@@ -66,5 +66,5 @@ private:
     Camera *camera_;
     CameraControler *controler_;
 
-    std::shared_ptr<Pyramid> pyramid_;
+    std::shared_ptr<Quad> quad_;
 };

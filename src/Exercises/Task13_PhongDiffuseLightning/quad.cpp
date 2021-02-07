@@ -1,4 +1,4 @@
-#include "pyramid.h"
+#include "quad.h"
 #include <vector>
 #include <string>
 
@@ -6,7 +6,7 @@
 #include "3rdParty/src/stb/stb_image.h"
 
 
-Pyramid::Pyramid() {
+Quad::Quad() {
     /*
         Tu dodajemy kod tworzący bufory indeksów i wierzchołków oraz obiekt VAO,
         Potem ładujemy dane wierzchołków i indeksow do buforów  i  podłaczamy je do atrybutów w szaderze
@@ -81,7 +81,7 @@ Pyramid::Pyramid() {
 
 }
 
-Pyramid::~Pyramid() {
+Quad::~Quad() {
     //Tu usuwamy VAO i bufory
 
     if(vao_) {
@@ -93,7 +93,7 @@ Pyramid::~Pyramid() {
 
 }
 
-void Pyramid::draw() {
+void Quad::draw() {
     //Tu wywolujemy polecenie glDrawElements
 
     glActiveTexture(GL_TEXTURE0);
