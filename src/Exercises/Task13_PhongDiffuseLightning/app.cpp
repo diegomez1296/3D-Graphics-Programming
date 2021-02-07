@@ -22,17 +22,17 @@ void SimpleShapeApplication::init() {
         std::cerr << std::string(PROJECT_DIR) + "/shaders/base_fs.glsl" << " shader files" << std::endl;
     }
 
-    auto u_modifiers_index = glGetUniformBlockIndex(program, "Modifiers");
-    if (u_modifiers_index == GL_INVALID_INDEX)
-    {
-        std::cout << "Cannot find Modifiers uniform block in program" << std::endl;
-    } else { glUniformBlockBinding(program, u_modifiers_index, 0); }
+//    auto u_modifiers_index = glGetUniformBlockIndex(program, "Modifiers");
+//    if (u_modifiers_index == GL_INVALID_INDEX)
+//    {
+//        std::cout << "Cannot find Modifiers uniform block in program" << std::endl;
+//    } else { glUniformBlockBinding(program, u_modifiers_index, 0); }
 
     auto u_matrixes_index = glGetUniformBlockIndex(program, "Matrixes");
     if (u_matrixes_index == GL_INVALID_INDEX)
     {
         std::cout << "Cannot find Matrixes uniform block in program" << std::endl;
-    } else { glUniformBlockBinding(program, u_matrixes_index, 1); }
+    } else { glUniformBlockBinding(program, u_matrixes_index, 0); }
 
     set_camera(new Camera);
     set_controler(new CameraControler(camera()));
@@ -51,7 +51,7 @@ void SimpleShapeApplication::init() {
     glGenBuffers(2,ubo_handle);
 
     glBindBuffer(GL_UNIFORM_BUFFER, ubo_handle[0]);
-    glBufferData(GL_UNIFORM_BUFFER, 12 * sizeof(float), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4) + sizeof(glm::mat<4,3,glm::f32>), nullptr, GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo_handle[0]);
 
@@ -61,7 +61,7 @@ void SimpleShapeApplication::init() {
     std::tie(w, h) = frame_buffer_size();
 
     camera_->perspective((glm::pi<float>()/4.0), (float)w/h, 0.1f, 100.0f);
-    camera_->look_at(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(0.0f,0.3f,0.05f), glm::vec3(0.0f,1.0f,0.0f));
+    camera_->look_at(glm::vec3(2.0f,2.0f,2.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f));
     glViewport(0, 0, w, h);
     //*********************
 
